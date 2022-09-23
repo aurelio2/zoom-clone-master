@@ -18,7 +18,6 @@ var getUserMedia =
   navigator.getUserMedia ||
   navigator.webkitGetUserMedia ||
   navigator.mozGetUserMedia;
-
 navigator.mediaDevices
   .getUserMedia({
     video: true,
@@ -26,7 +25,7 @@ navigator.mediaDevices
   })
   .then((stream) => {
     myVideoStream = stream;
-    addVideoStream(myVideo, stream);
+    addVideoStream(myVideo, stream,"me");
 
     peer.on("call", (call) => {
       call.answer(stream);
@@ -40,6 +39,11 @@ navigator.mediaDevices
     socket.on("user-connected", (userId) => {
       connectToNewUser(userId, stream);
     });
+
+    //usuario disconectado
+    socket.on("user-disconnected",(userId)=>{
+      if(perrs[userId])perrs[userId].close();
+    })
 
     document.addEventListener("keydown", (e) => {
       if (e.which === 13 && chatInputBox.value != "") {
@@ -149,6 +153,12 @@ const setMuteButton = () => {
   <span>Mute</span>`;
   document.getElementById("muteButton").innerHTML = html;
 };
+
+// chat
+const Showchat = (e)=>{
+  webkitURL.classList("active");
+  document.body.classList("showChat")
+}
 
 
 //invent
